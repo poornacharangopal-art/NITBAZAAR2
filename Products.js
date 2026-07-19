@@ -4,7 +4,7 @@ const ProductsSchema=new mongoose.Schema({
     type:String,
     required:true
   },
-  ImageUrl{
+  ImageUrl:{
     type:String,
     required:true
   },
@@ -12,7 +12,7 @@ const ProductsSchema=new mongoose.Schema({
     type:String,
     required:name
   },
-  Cost{
+  Cost:{
     type:Number,
     required:true
   },
@@ -25,6 +25,6 @@ const ProductsSchema=new mongoose.Schema({
     required:true
   }
 })
-module.exports=mongoose.model("product",ProductSchema);
+module.exports=mongoose.model("product",ProductsSchema);
 
   
