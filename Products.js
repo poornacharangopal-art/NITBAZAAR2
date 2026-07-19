@@ -25,6 +25,6 @@ const ProductsSchema=new mongoose.Schema({
     required:true
   }
 })
-module.export=model.mongoose("product",ProductSchema);
+module.exports=mongoose.model("product",ProductSchema);
 
   
