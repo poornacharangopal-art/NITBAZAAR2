@@ -1,23 +1,23 @@
 const mongoose=require("mongoose");
 const UserSchema=new mongoose.Schema({
   EmailId:{
-    type:string,
+    type:String,
     required:true
   },
   UserId:{
-    type:string,
+    type:String,
     required:true
   },
   UserName:{
-    type:string,
+    type:String,
     required:true
   },
   College:{
-    type:string,
+    type:String,
     required:true
   },
   password:{
-    type:string,
+    type:String,
     required:true
   }
 });
