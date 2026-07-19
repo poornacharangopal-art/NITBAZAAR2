@@ -10,7 +10,7 @@ const ProductsSchema=new mongoose.Schema({
   },
   UserEmail:{
     type:String,
-    required:name
+    required:true
   },
   Cost:{
     type:Number,
