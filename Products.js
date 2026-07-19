@@ -1,27 +1,27 @@
 const mongoose=require("mongoose");
 const ProductsSchema=new mongoose.Schema({
   Name:{
-    type:string,
+    type:String,
     required:true
   },
   ImageUrl{
-    type:string,
+    type:String,
     required:true
   },
   UserEmail:{
-    type:string,
+    type:String,
     required:name
   },
   Cost{
-    type:string,
+    type:Number,
     required:true
   },
   UserName:{
-    type:string,
+    type:String,
     required:true
   },
   College:{
-    type:string,
+    type:String,
     required:true
   }
 })
