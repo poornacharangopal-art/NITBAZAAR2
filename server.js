@@ -4,6 +4,7 @@ const nodemailer=require('nodemailer');
 const User=require("./User");
 const connectDB=require('./connectDB');
 const Products=require('./Products');
+const Otp=require('./Otp');
 const path=require('path');
 const app=express();
 connectDB();
@@ -37,16 +38,18 @@ app.use(session({
 }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-const otpstore={};
 //send otp
 app.post("/sendotp",async(req,res)=>{
     try{
     const email=req.body.email;
-    const otp = Math.floor(100000 + Math.random() * 900000);
-    otpstore[email]={
-        otp:otp,
-        expiry:Date.now()+5*60*1000
-    }
+    const otp1 = Math.floor(100000 + Math.random() * 900000);
+    await Otp.deleteMany({Email:email});
+    const otp=new Otp({
+        Email:email,
+        Otp:otp1,
+        Expiry:new Date(Date.now() + 5 * 60 * 1000)
+    });
+    await otp.save();
     await transporter.sendMail({
         from:"poornacharangopal@gmail.com",
         to:email,
@@ -62,7 +65,7 @@ Regards,
 The Team NIT Bazaar`
     });
     res.render("EnterOTP",{
-        email:email
+        email:email,
     });
     }catch(err) {
         console.error("SEND OTP ERROR:", err);
@@ -70,18 +73,20 @@ The Team NIT Bazaar`
     }
 })
 //verify otp
-app.post("/verify",(req,res)=>{
+app.post("/verify",async(req,res)=>{
     const email=req.body.email;
     const enteredotp=req.body.otp;
-    const otp=otpstore[email].otp;
-    const expiry=otpstore[email].expiry;
-    if(expiry<Date.now()){
+    const otp=await Otp.findOne({Email:email});
+    if (!otp) {
+    return res.send("OTP not found");
+}
+    if(otp.Expiry<Date.now()){
         res.render("ResendOtp",{
             email:email
         });
     }
     else{
-    if(enteredotp==otp){
+    if(enteredotp==otp.Otp){
         res.status(302);
         res.redirect(`/loginpage?email=${email}`);
     }
@@ -221,7 +226,7 @@ app.get("/products",async(req,res)=>{
     if(!user){
         return res.send("No user found");
     }
-    const products=await Product.find({College:user.College});
+    const products=await Products.find({College:user.College});
     res.render("displayproducts",{products});
 });
 const PORT = process.env.PORT || 3000;
