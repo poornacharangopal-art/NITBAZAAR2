@@ -72,9 +72,12 @@ The Team NIT Bazaar`
 app.post("/verify",async(req,res)=>{
     const email=req.body.email;
     const enteredotp=req.body.otp;
+    if(!otp[email]){
+        return res.send("OTP not found. Please request a new OTP.");
+    }
     const otp=Otp[email].otp;
-    const otp=Otp[email].expiry
-    if(xpiry<Date.now()){
+    const expiry=Otp[email].expiry
+    if(expiry<Date.now()){
         res.render("ResendOtp",{
             email:email
         });
