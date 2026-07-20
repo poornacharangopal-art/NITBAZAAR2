@@ -4,12 +4,10 @@ const nodemailer=require('nodemailer');
 const User=require("./User");
 const connectDB=require('./connectDB');
 const Products=require('./Products');
-const Otp=require('./Otp');
 const path=require('path');
 const app=express();
 connectDB();
-console.log("EMAIL:", process.env.EMAIL);
-console.log("PASSWORD EXISTS:", !!process.env.EMAIL_PASSWORD);
+const Otp={};
 const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -42,14 +40,12 @@ app.use(express.json());
 app.post("/sendotp",async(req,res)=>{
     try{
     const email=req.body.email;
-    const otp1 = Math.floor(100000 + Math.random() * 900000);
-    await Otp.deleteMany({Email:email});
-    const otp=new Otp({
-        Email:email,
-        Otp:otp1,
-        Expiry:new Date(Date.now() + 5 * 60 * 1000)
-    });
-    await otp.save();
+    const otp = Math.floor(100000 + Math.random() * 900000);
+   
+        Otp[email]={
+             otp:otp,
+        expiry:Date.now()+5*60*1000
+        }
     await transporter.sendMail({
         from:"poornacharangopal@gmail.com",
         to:email,
@@ -76,17 +72,15 @@ The Team NIT Bazaar`
 app.post("/verify",async(req,res)=>{
     const email=req.body.email;
     const enteredotp=req.body.otp;
-    const otp=await Otp.findOne({Email:email});
-    if (!otp) {
-    return res.send("OTP not found");
-}
-    if(otp.Expiry<Date.now()){
+    const otp=Otp[email].otp;
+    const otp=Otp[email].expiry
+    if(xpiry<Date.now()){
         res.render("ResendOtp",{
             email:email
         });
     }
     else{
-    if(enteredotp==otp.Otp){
+    if(enteredotp==otp){
         res.status(302);
         res.redirect(`/loginpage?email=${email}`);
     }
